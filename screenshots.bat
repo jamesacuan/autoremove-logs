@@ -5,7 +5,6 @@ set /a i = 01
 set LOG=%userprofile%\Documents\._\logs
 set GRP=COS
 set LIMIT=238
-set IPADD=172.16.41.
 set /a beforeTotal = 0;
 set /a afterTotal = 0;
 set /a totalTotal = 0;
@@ -107,15 +106,10 @@ goto :start
 echo Accessing T:\%GRP%-%i% of %LIMIT%:
 cd T:\%GRP%-%i%
 
-:du -n | find "Size"
-
 echo Number of Files:
 dir /a-d * | find /C "/"
 for /f %%A in ('dir ^| find "File(s)"') do set beforecnt=%%A
 set /a beforeTotal = %beforecnt%+%beforeTotal%
-
-:echo Current User:
-:WMIC /NODE:"%GRP%-%i%" COMPUTERSYSTEM GET USERNAME
 
 if exist *_2016* (
   echo Deleting screenshots from last year...
