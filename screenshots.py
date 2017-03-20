@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# recreation of screenshots.bat
+
 import subprocess as sp, os, os.path, datetime as dt, glob, math, re
 
 networkpath   = '\\\\germany\logs'
@@ -28,19 +30,24 @@ month = getMonth(month)
 
 def getStatus(pwd, j, k, l, m, n):
     sp.call('cls', shell=True)
-    print(pwd)
-    print("---------------------------")
-    print(j + "/" + k + " host (" + l + "%)")
-    print(m + " deleted")
+    print("\n" + pwd + "\n")
+    print("---------------------------\n")
+    print(j + " of " + k + " host (" + l + "%)")
+    print(m + " outdated logs deleted")
     if int(n) < 2:
         print(n + " host has no recent logs.")
     else:
         print(n + " hosts have no recent logs.")
-    print("---------------------------\n")
+    print("\n---------------------------\n")
   
 # deletion process
 sp.call('title Autodelete logs', shell=True)
+sp.call('if not exist ' + reportpath + '\logs mkdir ' + reportpath + '\logs', shell=True) # create report dir
+reportpath = reportpath + '\\logs'
+
 for pwd in dirs:
+    
+    tD = 0 # to be deleted?
     if (pwd != skipdirectory):
         qry = assignDrive + "\\" +pwd
         os.chdir(qry)
@@ -52,21 +59,22 @@ for pwd in dirs:
         
         for file in glob.glob("*"):
             if file.find(month)==-1:
-                if file.find(str(year))>0:     
-                    #print(file)
-                    os.remove(file)
-                    sD = sD+1
+                if file.find(str(year))>0:
+                    td = 1
                     
             if file.find("html")>0:
-                #print(file)
-                os.remove(file)
-                sD=sD+1
+                tD = 1
                 
-            if file.find(".009")>0:
+            if file.find(".009")>0:               
+                tD = 1
+                
+            if (tD == 1):
                 #print(file)
                 os.remove(file)
-                sD=sD+1
-        
+                sD = sD+1
+
+        # create dir log of current directory
+        sp.call('dir > ' + reportpath + '\\' + pwd + '.txt', shell=True)
         sI=sI+1
         
 print(emptyLogs)
