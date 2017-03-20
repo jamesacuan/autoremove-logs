@@ -10,6 +10,7 @@ assignDrive   = 'T:'
 month = dt.datetime.now().month
 year  = dt.datetime.now().year
 dirs = os.listdir( assignDrive )
+emptyLogs = [] # list of host without any recent logs
 sT = len(dirs)-1  # files in total
 sI = 1  # initial
 sP = 0  # percent
@@ -37,38 +38,37 @@ def getStatus(pwd, j, k, l, m, n):
         print(n + " hosts have no recent logs.")
     print("---------------------------\n")
   
-# deletion
+# deletion process
+sp.call('title Autodelete logs', shell=True)
 for pwd in dirs:
     if (pwd != skipdirectory):
         qry = assignDrive + "\\" +pwd
         os.chdir(qry)
         sP = math.ceil((sI/sT)*100)
-
+        print(getStatus(pwd, str(sI), str(sT), str(sP), str(sD), str(sN)))
+        if os.listdir(qry) == []:
+            emptyLogs.append(pwd)
+            sN = sN+1
         
         for file in glob.glob("*"):
             if file.find(month)==-1:
-                if file.find(str(year))>0:
-                    print(getStatus(pwd, str(sI), str(sT), str(sP), str(sD), str(sN)))
-                    print(file)
+                if file.find(str(year))>0:     
+                    #print(file)
                     os.remove(file)
                     sD = sD+1
                     
             if file.find("html")>0:
-                print(getStatus(pwd, str(sI), str(sT), str(sP), str(sD), str(sN)))
-                print(file)
+                #print(file)
                 os.remove(file)
                 sD=sD+1
                 
             if file.find(".009")>0:
-                print(getStatus(pwd, str(sI), str(sT), str(sP), str(sD), str(sN)))
-                print(file)
+                #print(file)
                 os.remove(file)
                 sD=sD+1
-             
-        sI=sI+1
-        print (file)
-        break
         
-
+        sI=sI+1
+        
+print(emptyLogs)
 
     
