@@ -39,10 +39,11 @@ def getStatus(pwd, j, k, m, o):
     print("\n---------------------------\n")
   
 # deletion process
-sp.call('title Autodelete logs', shell=True)
+sp.call('title Autodelete logs ('+ month + " " + str(year) + ")", shell=True)
 sp.call('if not exist ' + reportpath + '\logs mkdir ' + reportpath + '\logs', shell=True) # create report dir
 reportpath = reportpath + '\\logs'
 sp.call('copy /y NUL '+ reportpath +'\\_report.txt >NUL', shell=True)
+#sp.call('explorer.exe '+ assignDrive)      
 
 while(red0==1):
     for pwd in dirs:        
@@ -68,13 +69,20 @@ while(red0==1):
             for file in glob.glob("*"):
                 i = 1
                 fT += 1
-                if file.find(month)==-1:
-                    if file.find(str(year))>0:
-                        td = 1
-                        
-                if file.find("html")>0:
+
+                #previous months
+                if file.find("_"+month+"_")==-1:
                     tD = 1
-                
+
+                #last year        
+                if file.find("_"+str(year)+"_")==-1:
+                    tD = 1
+
+                #html    
+                if file.find(".html")>0:
+                    tD = 1
+
+                #arbitrary
                 while(i<=9):
                     if file.find(".00"+str(i))>0:
                         tD = 1
@@ -82,23 +90,23 @@ while(red0==1):
                     
                 if (tD == 1):
                     # print(os.stat(file).st_size) get file size
-                    # print(file)
                     os.remove(file)
+                    #print(file)
                     fD += 1
+                    tD = 0
 
             # create dir log of current directory
             # sp.call('dir > ' + reportpath + '\\' + pwd + '.txt', shell=True)
             
             sI += 1
 
-    
     # rescan
     sp.call('cls', shell=True)
     redo = input("Do you wish to rescan the logs folder? [y/n]: ")
-    if redo in ['y','Y','yes','YES','Yes']:
+    if redo in ['y','Y']:
         red0=1
     else: red0=0
     
 sp.call('cls', shell=True)    
-print("Finished scanning log. check this directory for info:")
+print("Finished scanning logs folder. check this directory for info:")
 sp.call('echo '+reportpath, shell=True)
