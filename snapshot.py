@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-# recreation of screenshots.bat
-
 import subprocess as sp, os, os.path, datetime as dt, glob, math, re
 
 networkpath   = '\\\\germany\logs'
