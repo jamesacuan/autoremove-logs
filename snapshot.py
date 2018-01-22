@@ -8,6 +8,7 @@ skipdirectory = '_For submission'
 assignDrive   = 'T:'
 
 month = dt.datetime.now().month
+day   = dt.datetime.now().day
 year  = dt.datetime.now().year
 dirs = os.listdir(assignDrive)
 redo = 'y'
@@ -33,15 +34,17 @@ def getStatus(pwd, j, k, m, o):
     print("\n" + pwd + "\n")
     print("---------------------------\n")
     print(j + " of " + k + " host (" + str(math.ceil((int(j)/int(k))*100)) + "%)")
-    print(m + " of " + o + " (" + str(math.ceil(int(o)-int(m))) +" rem.) files haves been deleted.")
+    print(m + " of " + o + " (" + str(math.ceil(int(o)-int(m))) +" rem.) files have been deleted.")
     print("\n---------------------------\n")
   
 # deletion process
 sp.call('title Autodelete logs ('+ month + " " + str(year) + ")", shell=True)
 sp.call('if not exist ' + reportpath + '\logs mkdir ' + reportpath + '\logs', shell=True) # create report dir
 reportpath = reportpath + '\\logs'
-sp.call('copy /y NUL '+ reportpath +'\\_report.txt >NUL', shell=True)
-#sp.call('explorer.exe '+ assignDrive)      
+#sp.call('copy /y NUL '+ reportpath +'\\_report.txt >NUL', shell=True)
+#sp.call('explorer.exe '+ assignDrive)
+#sp.call('echo ' + str(year) + ' ' + str(day), shell=True)
+#sp.call('pause', shell=True)
 
 while(red0==1):
     for pwd in dirs:        
@@ -80,11 +83,18 @@ while(red0==1):
                 if file.find(".html")>0:
                     tD = 1
 
+                #thumbs.db    
+                if file.find(".db")>0:
+                    tD = 0
+                    
                 #arbitrary
                 while(i<=9):
                     if file.find(".00"+str(i))>0:
                         tD = 1
                     i+=1
+                    
+                if(os.path.isdir(file)):
+                    tD = 0
                     
                 if (tD == 1):
                     # print(os.stat(file).st_size) get file size
@@ -93,8 +103,36 @@ while(red0==1):
                     fD += 1
                     tD = 0
 
+                    
+                '''j=1
+                while(j<=day):
+                    if(j<10):
+                        sD = '0'+str(j)
+                    else:
+                        sD = str(j)
+                    folder = month + sD + str(year)
+                    print(folder)
+                    #print('*_' + month + '_' + str(j) + '_'+ str(year) + '_*')
+                    #sp.call('echo ' + folder, shell=True)
+                    #sp.call('pause')
+                    if file.find(".jpg") > 0:
+                        if(file.find('_' + month + '_' + sD + '_'+ str(year) + '_'))>0:
+                            print('true')
+                            sp.call('if not exist ' + folder + ' (mkdir ' + folder + ')', shell=True)
+                            sp.call('move /Y *_' + month + '_' + sD + '_'+ str(year) + '_* %CD%\\' + folder, shell=True)
+                        #else:
+                            #print('false')
+                    j += 1
+                    #print(j)
+                    #dont mind me
+                    sp.call('if exist *_' + month + '_' + str(i) + '_'+ str(year) + '_* (if not exist ' + folder + ' mkdir ' + folder + ')', shell=True)
+                    sp.call('move /Y *_' + month + '_' + str(i) + '_'+ str(year) + '_* %CD%\\' + folder, shell=True)'''
+                
+                    
+                
             # create dir log of current directory
-            # sp.call('dir > ' + reportpath + '\\' + pwd + '.txt', shell=True)
+            sp.call('dir > D:\jecsacuan\Desktop\logs\\' + pwd + '.txt', shell=True)
+            #sp.call('dir > ' + reportpath + '\\' + pwd + '.txt', shell=True)
             
             sI += 1
 
@@ -105,6 +143,7 @@ while(red0==1):
         red0=1
     else: red0=0
     
-sp.call('cls', shell=True)    
+#sp.call('cls', shell=True)    
 print("Finished scanning logs folder. check this directory for info:")
 sp.call('echo '+reportpath, shell=True)
+sp.call('pause')
