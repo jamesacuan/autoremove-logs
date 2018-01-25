@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import subprocess as sp, os, os.path, datetime as dt, glob, math, re
+import subprocess as sp, os, os.path, datetime as dt, glob, math, re, time
 
 networkpath   = '\\\\germany\logs'
 reportpath    = '%userprofile%\Desktop'
@@ -49,6 +49,7 @@ reportpath = reportpath + '\\logs'
 while(red0==1):
     for pwd in dirs:        
         tD = 0 # to be deleted?
+        timestamp = ""
         if (pwd != skipdirectory):
             qry = assignDrive + "\\" +pwd
             os.chdir(qry)
@@ -127,13 +128,22 @@ while(red0==1):
                     #dont mind me
                     sp.call('if exist *_' + month + '_' + str(i) + '_'+ str(year) + '_* (if not exist ' + folder + ' mkdir ' + folder + ')', shell=True)
                     sp.call('move /Y *_' + month + '_' + str(i) + '_'+ str(year) + '_* %CD%\\' + folder, shell=True)'''
-                
-                    
+
+
+            # get latest date and time of capture
+            for file in glob.glob("*"):    
+                if file.find(".jpg") > 0:
+                  latefile = max(glob.iglob('*.jpg'), key=os.path.getctime)
+                  timestamp = "%s" % dt.datetime.strptime(time.ctime(os.path.getctime(latefile)), "%a %b %d %H:%M:%S %Y")
+                  #timestamp = "%s" % dt.datetime.strptime(time.ctime(os.path.getctime(latefile)), "%m-%d-%Y %I:%M%p")
+                  break
                 
             # create dir log of current directory
             sp.call('dir > D:\jecsacuan\Desktop\logs\\' + pwd + '.txt', shell=True)
+            sp.call("@echo " + pwd + "," + timestamp + " >> D:\jecsacuan\Desktop\logs\logs.csv", shell=True)
             #sp.call('dir > ' + reportpath + '\\' + pwd + '.txt', shell=True)
-            
+
+
             sI += 1
 
     # rescan
